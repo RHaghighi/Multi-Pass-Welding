@@ -1,0 +1,73 @@
+MODULE Reza_Program
+
+VAR iodev RotFile;    
+CONST num np:=18*3;   
+CONST num npr:=18*4; 
+VAR num Path_STC{np};
+VAR num Rot_STC{npr};
+VAR robtarget Path_Points;
+VAR num k:=1;
+VAR num x_pos{np/3};
+VAR num y_pos{np/3};
+VAR num z_pos{np/3};
+VAR num qw_Rot{npr/4};
+VAR num qx_Rot{npr/4};
+VAR num qy_Rot{npr/4};
+VAR num qz_Rot{npr/4};
+
+
+    PROC Demo100()
+    
+    Open "C:/Users/REZA0/Desktop/Jingqiang" \File:= "Pos_Center_Point.txt", PosFile \Read;
+            
+    FOR i FROM 1 TO np DO
+        Path_STC{i} := Readnum(PosFile\Delim:=",");
+    ENDFOR
+    
+    Close PosFile;
+    
+    
+    Open "C:/Users/REZA0/Desktop/Jingqiang" \File:= "Rot_Center_Point.txt", RotFile \Read;
+            
+    FOR i FROM 1 TO np DO
+        Rot_STC{i} := Readnum(RotFile\Delim:=",");
+    ENDFOR
+    
+    Close RotFile;
+    
+    WHILE k<=np/3 Do         
+        x_pos{k} := Path_STC{3*k-2};
+        y_pos{k} := Path_STC{3*k-1};
+        z_pos{k} := Path_STC{3*k};
+        k:=k+1;
+    ENDWhile
+    
+    k := 1;
+    
+    WHILE k<=npr/4 Do        
+        qw_Rot{k} := Rot_STC{4*k-3};
+        qx_Rot{k} := Rot_STC{4*k-2};
+        qy_Rot{k} := Rot_STC{4*k-1};
+        qz_Rot{k} := Rot_STC{4*k};
+        k:=k+1;
+    ENDWhile
+    
+    k := 1;
+    
+    WHILE k<=np/3 Do 
+        
+        Path_Points := [ [x_pos{k}, y_pos{k}, z_pos{k}], [qw_Rot{k},qx_Rot{k},qy_Rot{k},qz_Rot{k}],[0,-2,0,0], [9E9, 9E9, 9E9, 9E9, 9E9, 9E9] ];
+        
+        MoveJ Path_Points,v30,z200,tESABRT62W\WObj:=wobj0;
+        
+        k:=k+1;
+    ENDWhile
+
+    !FOR i FROM 1 TO 3 DO
+       ! MoveL Path_Points{i},v100,z100,Tooldata_1\WObj:=WorkobjectOneQuaterInchWelding;
+    !ENDFOR
+        
+
+    EndProC
+
+ENDMODULE
